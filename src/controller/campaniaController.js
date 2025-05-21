@@ -79,12 +79,14 @@ const activarCampania = async (req, res) => {
 
 const crearCampania = async (req, res) => {
     try {
-        const { nombre, descripcion, logo } = req.body;
+        const { nombre, descripcion, logo, reglamento, banner } = req.body;
 
         const campania = await Campania.create({
             nombre,
             descripcion,
             logo,
+            reglamento,
+            banner
         });
 
         return res.status(201).json({
@@ -220,7 +222,7 @@ const agregarPromociones = async (req, res) => {
 const editarCampania = async (req, res) => {
     try {
         const { idCampania } = req.params;
-        const { nombre, descripcion, activo, logo } = req.body;
+        const { nombre, descripcion, activo, logo, reglamento, banner } = req.body;
 
         const campania = await Campania.findByPk(idCampania);
         if (!campania) {
@@ -231,6 +233,8 @@ const editarCampania = async (req, res) => {
         campania.descripcion = descripcion || campania.descripcion;
         campania.logo = logo || campania.logo;
         campania.activo = activo !== undefined ? activo : campania.activo;
+        campania.reglamento = reglamento || campania.reglamento;
+        campania.banner = banner || campania.banner;
 
         await campania.save();
 
