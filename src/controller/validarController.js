@@ -29,11 +29,11 @@ const validarMail = async (req, res) => {
         await clienteExistente.save();
         const contenido = `
     <table style="width:100%; max-width:600px; margin:auto; font-family:Arial, sans-serif; border:1px solid #e0e0e0; border-collapse:collapse; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
-      <tr style="background-color:#821a3b; color:white;">
-        <td style="padding:20px; text-align:left; vertical-align:middle;">
-          <img src="cid:logo" alt="Scala Logo" style="height:50px; margin-right:10px;" />
+      <tr style="width:30%;background-color:#233454ff; color:white;">
+        <td style="padding:10px; text-align:left; vertical-align:middle;">
+          <img src="cid:logo" alt="Pomasqui Logo" style="height:65px; margin-right:10px;" />
         </td>
-        <td style="padding:20px; text-align:left; vertical-align:middle;">
+        <td style="width:70%;padding:10px; text-align:left; vertical-align:middle;">
           <h2 style="margin:0;">Sistema de Canjes</h2>
         </td>
       </tr>
@@ -49,7 +49,7 @@ const validarMail = async (req, res) => {
           <p style="font-size:15px; color:#333;">
             Por tu seguridad, no compartas esta información con NADIE. Para cambiar tu contraseña, tu código es:
           </p>
-          <p style="font-size:24px; font-weight:bold; color:#821a3b; text-align:center; margin:20px 0;">
+          <p style="font-size:24px; font-weight:bold; color:#233454ff; text-align:center; margin:20px 0;">
             ${codigo}
           </p>
           <p style="font-size:14px; color:#555;">
@@ -69,25 +69,25 @@ const validarMail = async (req, res) => {
 `;
 
 
-        const transporter = nodemailer.createTransport({
-            host: "mail.plazapomasqui.com",
-            port: 465,
-            secure: true,
+       const transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
+            secure: process.env.MAIL_SECURE,
             auth: {
-                user: "scalacanjes@plazapomasqui.com",
-                pass: "tqom]@S#u3G1",
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASSWORD
             },
         });
 
         const mailOptions = {
-            from: "scalacanjes@plazapomasqui.com",
+            from: process.env.MAIL_USER,
             to: clienteExistente.email,
             subject: "Cambio de contraseña",
             html: contenido,
             attachments: [
                 {
-                    filename: 'logo-scala-blanco.png',
-                    path: path.join(__dirname, '../../public/logo-scala-blanco.png'),
+                    filename: 'logo-pomasqui.png',
+                    path: path.join(__dirname, '../../public/logo-pomasqui.png'),
                     cid: 'logo'
                 }
             ]
