@@ -7,6 +7,7 @@ import {
     agregarPromociones,
     editarCampania,
     obtenerCampania,
+    agregarFormasPago,
 } from "../controller/campaniaController.js";
 
 const campaniaRouter = express.Router();
@@ -16,6 +17,7 @@ campaniaRouter.post("/activarCampania", activarCampania);
 campaniaRouter.post("/", crearCampania);
 campaniaRouter.post("/agregarTiendas", agregarTiendas);
 campaniaRouter.post("/agregarPromociones", agregarPromociones);
+campaniaRouter.post("/agregarFormasPago", agregarFormasPago);
 campaniaRouter.put("/:idCampania", editarCampania);
 campaniaRouter.get("/:idCampania", obtenerCampania);
 

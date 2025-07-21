@@ -45,6 +45,22 @@ Tienda.belongsToMany(Campania, {
     timestamps: false,
 });
 
+Campania.belongsToMany(Formapago, {
+    through: "campania_formapago",
+    foreignKey: "campania_id",
+    otherKey: "formapago_id",
+    timestamps: false,
+    as: "formaspago",
+});
+
+Formapago.belongsToMany(Campania, {
+    through: "campania_formapago",
+    foreignKey: "formapago_id",
+    otherKey: "campania_id",
+    timestamps: false,
+    as: "campanias",
+});
+
 Ciudad.belongsTo(Provincia, {
     foreignKey: "provincia_id",
     as: "provincia",

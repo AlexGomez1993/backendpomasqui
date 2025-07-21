@@ -1,4 +1,4 @@
-import { Campania, ConfigSaldo, Promocion, Tienda } from "../models/index.js";
+import { Campania, ConfigSaldo, Formapago, Promocion, Tienda } from "../models/index.js";
 import { getFilters } from "../helpers/filtros.js";
 import { getPagination } from "../helpers/paginacion.js";
 
@@ -14,6 +14,11 @@ const listarCampania = async (req, res) => {
                 { model: Promocion, as: "promociones" },
                 { model: ConfigSaldo, as: "configuracion" },
                 { model: Tienda, as: "tiendas" },
+                {
+                    model: Formapago,
+                    as: "formaspago",
+                    attributes: ["id", "nombre", "factor", "activo"],
+                },
             ],
             distinct: true,
         };
@@ -219,6 +224,67 @@ const agregarPromociones = async (req, res) => {
     }
 };
 
+const agregarFormasPago = async (req, res) => {
+    try {
+        const { campaniaId, formaspagoIds, eliminarFormasPagoIds } = req.body;
+
+        const campania = await Campania.findByPk(campaniaId, {
+            include: { model: Formapago, as: "formaspago" },
+        });
+        if (!campania) {
+            return res.status(404).json({ error: "Campaña no encontrada" });
+        }
+
+        if (formaspagoIds && formaspagoIds.length > 0) {
+            const formasPagoExistentes = await campania.getFormaspago();
+
+            const formasPagoExistentesIds = formasPagoExistentes.map(
+                (t) => t.id
+            );
+
+            const nuevasFormasPagoIds = formaspagoIds.filter(
+                (id) => !formasPagoExistentesIds.includes(id)
+            );
+
+            if (nuevasFormasPagoIds.length > 0) {
+                const nuevasFormasPago = await Formapago.findAll({
+                    where: { id: nuevasFormasPagoIds },
+                });
+
+                if (nuevasFormasPago.length !== nuevasFormasPagoIds.length) {
+                    return res.status(400).json({
+                        error: "Algunas formas de pago a agregar no existen en la base de datos",
+                    });
+                }
+
+                await campania.addFormaspago(nuevasFormasPago);
+            }
+        }
+
+        if (eliminarFormasPagoIds && eliminarFormasPagoIds.length > 0) {
+            const formasPagoAEliminar = await Formapago.findAll({
+                where: { id: eliminarFormasPagoIds },
+            });
+
+            if (formasPagoAEliminar.length > 0) {
+                await campania.removeFormaspago(formasPagoAEliminar);
+            }
+        }
+
+        return res.status(200).json({
+            msg: `Formas de pago actualizadas en la campaña ${campania.nombre} correctamente`,
+            campania: campania.nombre,
+            id: campania.id,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Error al actualizar las formas de pago en la campaña",
+            message: error.message,
+        });
+    }
+};
+
 const editarCampania = async (req, res) => {
     try {
         const { idCampania } = req.params;
@@ -261,6 +327,11 @@ const obtenerCampania = async (req, res) => {
                 { model: Tienda },
                 { model: Promocion, as: "promociones" },
                 { model: ConfigSaldo, as: "configuracion" },
+                {
+                    model: Formapago,
+                    as: "formaspago",
+                    attributes: ["id", "nombre", "factor", "activo"],
+                },
             ],
             distinct: true,
         });
@@ -289,4 +360,5 @@ export {
     agregarPromociones,
     editarCampania,
     obtenerCampania,
+    agregarFormasPago
 };
