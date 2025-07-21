@@ -118,10 +118,10 @@ const obtenerClienteId = async (req, res) => {
         })
         if (cliente) {
             return res.status(200).json({
-                clienteExistente,
+                clienteExistente:cliente,
             });
         }
-        if (!clienteExistente) {
+        if (!cliente) {
             return res.status(404).json({ msg: "Cliente no encontrado" });
         }        
     } catch (error) {

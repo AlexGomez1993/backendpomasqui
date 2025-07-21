@@ -14,7 +14,7 @@ clienteRouter.get("/", listarClientes);
 clienteRouter.get("/:rucCliente", obtenerCliente);
 clienteRouter.post("/isla", crearClienteIsla);
 clienteRouter.put("/:idCliente", editarCliente);
-clienteRouter.get("/:idCliente", obtenerClienteId);
+clienteRouter.get("/id/:idCliente", obtenerClienteId);
 clienteRouter.post("/cambioContrasenia", cambiarContrasena);
 
 export default clienteRouter;
